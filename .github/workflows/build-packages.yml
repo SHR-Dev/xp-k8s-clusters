@@ -8,5 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     container: bitnami/kubectl
     steps:
-    - run: sudo curl -sL https://raw.githubusercontent.com/crossplane/crossplane-cli/master/bootstrap.sh | sudo  bash
+    - run: curl -sL https://raw.githubusercontent.com/crossplane/crossplane-cli/master/bootstrap.sh | bash
     - run: ./kubectl-crossplane build configuration -f aks-environment
