@@ -6,9 +6,6 @@ on:
 jobs:
   build-aks:
     runs-on: ubuntu-latest
-    container: bitnami/kubectl
+    container: ghcr.io/mruge-shr/crossplane-cli:main
     steps:
-    - run: apt update; apt install curl
-    - run: curl -sL https://raw.githubusercontent.com/crossplane/crossplane-cli/master/bootstrap.sh | bash
-    - run: ls -a
-    - run: ./kubectl-crossplane build configuration -f aks-environment
+    - run: /kubectl-crossplane build configuration -f aks-environment
