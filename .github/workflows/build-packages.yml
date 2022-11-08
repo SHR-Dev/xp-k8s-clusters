@@ -8,4 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/mruge-shr/crossplane-cli:main
     steps:
-    - run: /kubectl-crossplane build configuration -f aks-environment
+    - run: pwd
+    - run: ls -a 
+    - run: /kubectl-crossplane build configuration -f aks-environment/
