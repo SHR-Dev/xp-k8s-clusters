@@ -26,4 +26,4 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push to Registry
-      run: /kubectl-crossplane push configuration -f aks-environment/
+      run: /kubectl-crossplane push configuration -f aks-environment/ ${{ env.IMAGE_NAME }}:latest
