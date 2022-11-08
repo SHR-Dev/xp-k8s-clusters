@@ -1,5 +1,9 @@
 name: build-packages
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 on: 
   - push
 
@@ -8,5 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/mruge-shr/crossplane-cli:main
     steps:
-    - uses: actions/checkout@v3
-    - run: /kubectl-crossplane build configuration -f aks-environment/
+    - name: Checkout Code 
+      uses: actions/checkout@v3
+    
+    - name: Build Configuration
+      run: /kubectl-crossplane build configuration -f aks-environment/
+    
+    - name: Log into registry ${{ env.REGISTRY }}
+      uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push to Registry
+      run: /kubectl-crossplane push configuration -f aks-environment/
