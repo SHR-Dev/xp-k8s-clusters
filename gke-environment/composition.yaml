@@ -1,0 +1,11 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: gkeclusters.k8s.shred.cloud
+  labels:
+    provider: gcp
+spec:
+  compositeTypeRef:
+    apiVersion: k8s.shred.cloud/v1alpha1
+    kind: gkecluster
+  resources:

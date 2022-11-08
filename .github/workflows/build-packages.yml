@@ -1,0 +1,12 @@
+name: build-packages
+
+on: 
+  - push
+
+jobs:
+  build-aks:
+    runs-on: ubuntu-latest
+    container: bitnami/kubectl
+    steps:
+    - run: sudo curl -sL https://raw.githubusercontent.com/crossplane/crossplane-cli/master/bootstrap.sh | sudo  bash
+    - run: ./kubectl-crossplane build configuration -f aks-environment

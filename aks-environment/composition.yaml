@@ -1,0 +1,11 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: eksclusters.k8s.shred.cloud
+  labels:
+    provider: azure
+spec:
+  compositeTypeRef:
+    apiVersion: k8s.shred.cloud/v1alpha1
+    kind: ekscluster
+  resources:

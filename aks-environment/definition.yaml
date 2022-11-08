@@ -1,0 +1,23 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: aksclusters.k8s.shred.cloud
+spec:
+  group: k8s.shred.cloud
+  names:
+    kind: akscluster
+    plural: aksclusters
+  claimNames:
+    kind: akscluster
+    plural: aksclusters
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
