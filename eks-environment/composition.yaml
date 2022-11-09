@@ -9,3 +9,19 @@ spec:
     apiVersion: k8s.shred.cloud/v1alpha1
     kind: ekscluster
   resources:
+    - name: vpc 
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: VPC
+        metadata:
+          name: myeks
+        spec:
+          forProvider:
+            cidrBlock: 10.0.0.0/16
+            region: us-east-1
+          providerConfigRef:
+            name: provider-aws
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.parameters.region
+        toFieldPath: spec.forProvider.region
