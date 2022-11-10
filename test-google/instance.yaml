@@ -1,0 +1,10 @@
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: ekscluster
+metadata:
+  name: demo-gke
+spec:
+  compositionSelector:
+    matchLabels:
+      provider: gcp
+  parameters:
+    region: "us-central1-a"

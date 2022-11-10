@@ -1,0 +1,15 @@
+apiVersion: gcp.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default # naming it default makes it default, as in can avoid overriding provider ref for ever resource
+spec:
+  projectID:
+    source: Secret
+    secretRef:
+      name: gcp-credentials
+      key: projectID
+  credentials:
+    source: Secret
+    secretRef:
+      name: gcp-credentials
+      key: credentials

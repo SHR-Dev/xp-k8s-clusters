@@ -9,3 +9,20 @@ spec:
     apiVersion: k8s.shred.cloud/v1alpha1
     kind: gkecluster
   resources:
+    - name: cluster
+      base:
+        apiVersion: container.gcp.crossplane.io/v1beta2
+        kind: Cluster
+        spec:
+          forProvider:
+            location: us-central1-a
+    - name: nodes
+      base:
+        apiVersion: container.gcp.crossplane.io/v1alpha1
+        kind: NodePool
+        metadata:
+          name: gke-crossplane-np
+        spec:
+          forProvider:
+            clusterSelector:
+              matchControllerRef: true

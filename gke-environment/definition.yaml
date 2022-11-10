@@ -21,3 +21,9 @@ spec:
           spec:
             type: object
             properties:
+              parameters:
+                type: object
+                properties:
+                  region:
+                    description: Region
+                    type: string
