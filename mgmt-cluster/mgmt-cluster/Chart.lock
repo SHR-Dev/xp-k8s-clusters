@@ -1,0 +1,18 @@
+dependencies:
+- name: crossplane
+  repository: https://charts.crossplane.io/stable
+  version: 1.10.0
+- name: argo-workflows
+  repository: https://argoproj.github.io/argo-helm
+  version: 0.20.7
+- name: argo-cd
+  repository: https://argoproj.github.io/argo-helm
+  version: 5.13.8
+- name: gitea
+  repository: https://dl.gitea.io/charts/
+  version: 6.0.3
+- name: harbor
+  repository: https://helm.goharbor.io
+  version: 1.10.2
+digest: sha256:b5fbd3557694131880f753f6c8557ef6091ce92b72b3fbcfd72596b45ef8a931
+generated: "2022-11-14T13:01:27.889166878-05:00"

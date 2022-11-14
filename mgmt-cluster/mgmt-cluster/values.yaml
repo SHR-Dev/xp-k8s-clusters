@@ -1,0 +1,48 @@
+kind:
+  ingress:
+    enabled: false
+
+preload:
+  gitRepos:
+  helmCharts:
+  Containers:
+  
+
+gitea:
+  memcached:
+    enabled: false
+  persistence:
+    enabled: false
+  admin:
+    username: admin
+    password: admin
+  postgresql:
+    enabled: true
+  # ingress:
+  #   enabled: true
+  #   hosts:
+  #     - paths:
+  #       - path: "/git"
+  #         pathType: Prefix
+harbor:
+  persistence:
+    enabled: false
+  expose:
+    type: clusterIP
+    tls:
+      enabled: false
+argo-cd:
+  repositories:
+    istio-helm-repo:
+      url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
+      name: istio.io
+      type: helm
+
+# nginx-ingress:
+#   controller:
+#     service:
+#       type: NodePort
+#       # httpPort:
+#       #   nodePort: 80
+#       # httpsPort:
+#       #   nodePort: 443
