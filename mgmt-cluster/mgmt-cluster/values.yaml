@@ -9,15 +9,17 @@ preload:
   
 
 gitea:
+  gitea:
+    config:
+      webhook:
+        ALLOWED_HOST_LIST: "*"
   memcached:
     enabled: false
   persistence:
     enabled: false
-  admin:
-    username: admin
-    password: admin
   postgresql:
-    enabled: true
+    persistence:
+      enabled: false
   # ingress:
   #   enabled: true
   #   hosts:
@@ -27,16 +29,34 @@ gitea:
 harbor:
   persistence:
     enabled: false
+  trivy:
+    enabled: false
+  notary:
+    enabled: false
   expose:
     type: clusterIP
     tls:
       enabled: false
 argo-cd:
+  dex:
+    enabled: false
+  redis:
+    enabled: false
+  notifications:
+    enabled: false
   repositories:
     istio-helm-repo:
       url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
       name: istio.io
       type: helm
+
+argo-workflows:
+  server:
+    extraArgs:
+      - --auth-mode=server
+
+argo-events: {}
+
 
 # nginx-ingress:
 #   controller:

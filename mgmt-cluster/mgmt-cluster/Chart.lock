@@ -2,9 +2,12 @@ dependencies:
 - name: crossplane
   repository: https://charts.crossplane.io/stable
   version: 1.10.0
+- name: argo-events
+  repository: https://argoproj.github.io/argo-helm
+  version: 2.0.6
 - name: argo-workflows
   repository: https://argoproj.github.io/argo-helm
-  version: 0.20.7
+  version: 0.20.8
 - name: argo-cd
   repository: https://argoproj.github.io/argo-helm
   version: 5.13.8
@@ -14,5 +17,5 @@ dependencies:
 - name: harbor
   repository: https://helm.goharbor.io
   version: 1.10.2
-digest: sha256:b5fbd3557694131880f753f6c8557ef6091ce92b72b3fbcfd72596b45ef8a931
-generated: "2022-11-14T13:01:27.889166878-05:00"
+digest: sha256:59625c06cad88baa73e8bb7629c4c83c7d7b1144c2c3cc51e750bae7152e28b6
+generated: "2022-11-15T09:53:34.708657936-05:00"

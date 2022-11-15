@@ -9,8 +9,11 @@ dependencies:
 - name: crossplane
   version: "1.10.0"
   repository: "https://charts.crossplane.io/stable"
+- name: argo-events
+  version: "2.0.6"
+  repository: "https://argoproj.github.io/argo-helm"
 - name: argo-workflows
-  version: "0.20.7"
+  version: "0.20.8"
   repository: "https://argoproj.github.io/argo-helm"
 - name: argo-cd
   version: "5.13.8"
