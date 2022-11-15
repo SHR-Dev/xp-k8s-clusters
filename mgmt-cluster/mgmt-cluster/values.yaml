@@ -11,6 +11,8 @@ preload:
 gitea:
   gitea:
     config:
+      server:
+        ROOT_URL: "http://mgmt-gitea-http:3000"
       webhook:
         ALLOWED_HOST_LIST: "*"
   memcached:
