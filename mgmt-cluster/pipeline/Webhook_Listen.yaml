@@ -1,3 +1,64 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: operate-workflow-sa
+---
+# Similarly you can use a ClusterRole and ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: operate-workflow-role
+rules:
+  - apiGroups:
+      - argoproj.io
+    verbs:
+      - "*"
+    resources:
+      - workflows
+      - workflowtemplates
+      - cronworkflows
+      - clusterworkflowtemplates
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: operate-workflow-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: operate-workflow-role
+subjects:
+  - kind: ServiceAccount
+    name: operate-workflow-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    workflows.argoproj.io/description: |
+      Recomended minimum permissions for the `emissary` executor.
+  name: executor
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtaskresults
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: executor-default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: executor
+subjects:
+- kind: ServiceAccount
+  name: default
+---
 apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
@@ -27,6 +88,10 @@ metadata:
   name: webhook
 spec:
   template:
+    container:
+        env:
+          - name: DEBUG_LOG
+            value: "true"
     serviceAccountName: operate-workflow-sa
   dependencies:
     - name: test-dep
@@ -63,7 +128,9 @@ spec:
                   - - name: checkout
                       template: checkout
                   - - name: build
-                      template: build-configure
+                      template: build-configuration
+                  - - name: push
+                      template: push-configuration
                 - name: checkout
                   container:
                     image: bitnami/git:latest
@@ -72,7 +139,7 @@ spec:
                     volumeMounts:
                     - name: workdir
                       mountPath: /workdir
-                - name: build-configure
+                - name: build-configuration
                   container:
                     image: ghcr.io/mruge-shr/crossplane-cli:main
                     command: ["/kubectl-crossplane"]
@@ -80,7 +147,25 @@ spec:
                       - "build"
                       - "configuration"
                       - "--package-root=/workdir/aks-environment/"
+                      - "--name=aks-environment"
                       - "--verbose"
+                    volumeMounts:
+                    - name: workdir
+                      mountPath: /workdir
+                - name: push-configuration
+                  script:
+                    image: ghcr.io/mruge-shr/crossplane-cli:main
+                    # imagePullPolicy: Always
+                    command: ["bash"]
+                    source: |
+                      mkdir -p /etc/docker/certs.d/harbor.default.svc.cluster.local/
+                      
+                      echo | openssl s_client -connect harbor.default.svc.cluster.local:443 2>&1 | openssl x509 -text | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /etc/docker/certs.d/harbor.default.svc.cluster.local/ca.crt
+
+                      docker login --username='robot$idk' --password='IvyHPfIR6bAnAHZ8gNMEhu20Ghu9tCAA' harbor.default.svc.cluster.local
+
+                      cd /workdir/aks-environment/
+                      /kubectl-crossplane push configuration harbor.default.svc.cluster.local/library/aks-environment:main
                     volumeMounts:
                     - name: workdir
                       mountPath: /workdir

@@ -1,0 +1,14 @@
+@startuml
+
+card chrome 
+card "kube port-proxy" as kube 
+card "nginx:80" as nginx 
+card "gitea:3000" as git 
+card "harbor:80" as harbor 
+card "argo:2746" as argo 
+chrome --> kube 
+kube   --> nginx 
+nginx  --> git    : /git
+nginx  --> harbor : /registry
+nginx  --> argo   : /cicd
+@enduml

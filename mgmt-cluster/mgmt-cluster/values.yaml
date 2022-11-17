@@ -29,6 +29,7 @@ gitea:
   #       - path: "/git"
   #         pathType: Prefix
 harbor:
+  externalURL: "https://harbor.default.svc.cluster.local"
   persistence:
     enabled: false
   trivy:
@@ -38,7 +39,10 @@ harbor:
   expose:
     type: clusterIP
     tls:
-      enabled: false
+      auto:
+        commonName: harbor.default.svc.cluster.local
+    # tls:
+    #   enabled: false
 argo-cd:
   dex:
     enabled: false

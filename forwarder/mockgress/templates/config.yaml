@@ -1,0 +1,21 @@
+apiVersion: v1
+
+kind: ConfigMap
+metadata:
+  name: {{ include "mockgress.fullname" . }}
+  labels:
+    {{- include "mockgress.labels" . | nindent 4 }}
+data:
+  nginx.conf: |-
+    server {
+      
+      listen       80;
+
+      location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+      }
+      location /git/ {
+        proxy_pass     http://mgmt-gitea-http:3000;
+      }
+    }

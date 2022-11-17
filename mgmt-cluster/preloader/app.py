@@ -24,7 +24,9 @@ response = requests.post(
     })
 
 def post(path,data):
+    # print(path, data)
     response = requests.post(path, headers=headers,json=data)
+    # print(response.status_code, response.content)
     if int(response.status_code) < 400:
         return True
     else:
@@ -32,11 +34,12 @@ def post(path,data):
 
 src_repos = [
 'https://github.com/SHRGroup/oscal-cli',
-'https://github.com/mruge-shr/xp-k8s-clusters'
+'git@github.com:mruge-shr/xp-k8s-clusters.git'
 ]
 for src_repo in src_repos:
     with TemporaryDirectory() as repo_dir:
-        name = src_repo.split('/')[-1]
+        name = src_repo.split('/')[-1].split('.')[0]
+        print(name)
 
         # Create Repo
         post(f'{api}/orgs/{org}/repos', {'name':name})
