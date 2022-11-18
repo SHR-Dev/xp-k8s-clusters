@@ -1,0 +1,8 @@
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: tenant
+metadata:
+  name: "mytenant"
+  namespace: "default"
+spec:
+  parameters:
+    poc: "Ruge"
