@@ -46,8 +46,8 @@ harbor:
 argo-cd:
   dex:
     enabled: false
-  redis:
-    enabled: false
+  # redis:
+  #   enabled: false
   notifications:
     enabled: false
   repositories:

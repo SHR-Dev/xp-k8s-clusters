@@ -75,6 +75,7 @@ spec:
                 source:
                   repoURL: theRepo
                   targetRevision: HEAD
+                  path: /
                 destination:
                   server: https://kubernetes.default.svc
                   namespace: thenamespace
