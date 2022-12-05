@@ -1,0 +1,28 @@
+# helmChartInflationGenerator:
+# - chartName: nginx-ingress
+#   chartRepoUrl: https://helm.nginx.com/stable
+#   releaseName: nginx
+#   releaseNamespace: nginx-system
+helmCharts:
+- name: nginx-ingress
+  releaseName: nginx
+  repo: https://helm.nginx.com/stable
+  namespace: nginx-system
+  includeCRDs: true
+  valuesInline:
+    controller:
+      setAsDefaultIngress: true
+
+patches:
+- patch: |-
+    - path: /spec/template/spec/containers/0/readinessProbe
+      op: remove
+    - op: add
+      path: /spec/template/spec/containers/0/ports/0/hostPort
+      value: 80
+    - op: add
+      path: /spec/template/spec/containers/0/ports/1/hostPort
+      value: 443
+  target:
+    kind: Deployment
+    name: nginx-nginx-ingress 

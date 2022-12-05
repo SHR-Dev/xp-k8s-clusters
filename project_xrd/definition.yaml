@@ -1,0 +1,71 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: projects.k8s.shred.cloud
+spec:
+  group: k8s.shred.cloud
+  names:
+    kind: Project
+    plural: projects
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              compliance:
+                type: boolean
+              builds:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+              deployments:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+              testing:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+              description:
+                type: object
+                properties:
+                  poc:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type: string
+                required:
+                - poc
+            required:
+            - description
+    additionalPrinterColumns:
+    - name: POC
+      type: string
+      description: projects primary poc
+      jsonPath: .spec.description.poc.name
+    - name: Builds
+      type: string
+      jsonPath: range .spec.builds[*].name
+    - name: Deployments
+      type: string
+      jsonPath: range .spec.deployments[*].name
+    - name: Testing
+      type: string
+      jsonPath: range .spec.testing[*].name

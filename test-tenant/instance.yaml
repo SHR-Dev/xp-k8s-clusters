@@ -1,8 +1,34 @@
 apiVersion: k8s.shred.cloud/v1alpha1
-kind: tenant
+kind: project
 metadata:
-  name: "mytenant"
+  name: "myproject"
   namespace: "default"
 spec:
   parameters:
-    poc: "Ruge"
+    poc: 
+      name: Matthew Ruge
+      email: matthew.ruge@shrgroupllc.com
+      organization: SHR
+    initialize:
+      - type: git
+        templateName: shrProject
+    environments:
+      - name: Dev
+        type: XRD
+        path: aws-environment
+    build:
+      - name: myApplication
+        type: argo-workflow
+        path: ./src/
+    deploy:
+      - name: Integration
+        path: ./chart/
+        other: |-
+          version: latest
+    compliance:
+      - name: MyApplicationComponent
+        type: OSCAL
+        path: ./compliance/myapp-cdef.xml
+
+
+

@@ -1,11 +1,9 @@
 #!/bin/bash
 kind delete cluster
 
-kind create cluster
+kind create cluster --config=kind.yml
 
-helm upgrade --install --wait mgmt mgmt-cluster/ 
-python3 forward_ports.py &
+kubectl create ns nginx-system
+kubectl kustomize --enable-helm kustomization/ | kubectl apply -f -
 
-# kubectl wait --for=condition=ready pod -l app=gitea
-kubectl apply -f pipeline/Webhook_Listen.yaml
-python3 preloader/app.py
+helm upgrade --install --wait mgmt mgmt-cluster/ --timeout 15m0s

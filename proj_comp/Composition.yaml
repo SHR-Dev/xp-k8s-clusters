@@ -1,0 +1,55 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: projects.k8s.shred.cloud
+spec:
+  compositeTypeRef:
+    apiVersion: k8s.shred.cloud/v1alpha1
+    kind: project
+  resources:
+    - name: namespace
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        metadata:
+          name: project-namespace
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Namespace
+      patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.manifest.metadata.name
+    - name: repo
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        metadata:
+          name: project-initialization
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              spec:
+                entrypoint: go
+                templates:
+                  - name: go
+                    container:
+                      image: matthewruge/gitea-driver:latest
+                      imagePullPolicy: Always
+                      env:
+                        - name: GITEA_USERNAME
+                          value: 'gitea_admin'
+                        - name: GITEA_PASSWORD
+                          value: 'r8sA8CPHD9!bt6d'
+                        - name: GITEA_URI
+                          value: http://mgmt-gitea-http:3000
+                        - name: ORGNAME
+                          value: orgname
+                        - name: REPONAME
+                          value: environment
+      patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
