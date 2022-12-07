@@ -14,8 +14,7 @@ spec:
         templateName: shrProject
     environments:
       - name: Dev
-        type: XRD
-        path: aws-environment
+        template: aws-environment
     build:
       - name: myApplication
         type: argo-workflow

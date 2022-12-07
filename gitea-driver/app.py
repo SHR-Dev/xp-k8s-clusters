@@ -2,11 +2,10 @@ import requests, os, random, string
 
 GITEA_URI = os.environ.get('GITEA_URI','http://mgmt-gitea-http')
 GITEA_USERNAME = os.environ.get('GITEA_USERNAME','gitea_admin')
-GITEA_PASSWORD = os.environ.get('GITEA_PASSWORD')
+GITEA_PASSWORD = os.environ.get('GITEA_PASSWORD','r8sA8CPHD9!bt6d')
 
 api = f"{GITEA_URI}/api/v1"
 auth = requests.auth.HTTPBasicAuth(GITEA_USERNAME, GITEA_PASSWORD)
-
 
 token = requests.post(
     f'{api}/users/{GITEA_USERNAME}/tokens',
@@ -16,7 +15,7 @@ headers={'Authorization': f'token {token}'}
 
 def post(path,data):
     response = requests.post(path, headers=headers,json=data)
-    print(f"{path} - {response.status_code}")
+    print(f"{path} - {data } - {response.status_code}")
     if int(response.status_code) < 400:
         return True
     else:
