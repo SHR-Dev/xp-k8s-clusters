@@ -10,7 +10,7 @@ spec:
     targetRevision: 0.20.8
     helm:
       parameters:
-        - name: server.extraArgs.0
+        - name: server.extraArgs[0]
           value: "--auth-mode=server"
   destination:
     server: "https://kubernetes.default.svc"
@@ -36,19 +36,19 @@ spec:
     automated:
       selfHeal: true
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: argo
-spec:
-  project: management
-  source:
-    chart: argo-cd
-    repoURL: https://argoproj.github.io/argo-helm
-    targetRevision: 5.13.8
-  destination:
-    server: "https://kubernetes.default.svc"
-    namespace: management
-  syncPolicy:
-    automated:
-      selfHeal: true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: argo
+# spec:
+#   project: management
+#   source:
+#     chart: argo-cd
+#     repoURL: https://argoproj.github.io/argo-helm
+#     targetRevision: 5.13.8
+#   destination:
+#     server: "https://kubernetes.default.svc"
+#     namespace: management
+#   syncPolicy:
+#     automated:
+#       selfHeal: true

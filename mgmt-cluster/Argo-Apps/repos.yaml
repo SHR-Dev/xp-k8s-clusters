@@ -10,8 +10,14 @@ spec:
     targetRevision: 6.0.3
     helm:
       parameters:
+        - name: persistence.enabled
+          value: "false"
         - name: gitea.config.webhook.ALLOWED_HOST_LIST
           value: "*"
+        - name: postgresql.persistence.enabled
+          value: "false"
+        - name: memcached.enabled
+          value: "false"
   destination:
     server: "https://kubernetes.default.svc"
     namespace: management
@@ -39,6 +45,10 @@ spec:
         - name: trivy.enabled
           value: "false"
         - name: notary.enabled
+          value: "false"
+        - name: chartmuseum.enabled
+          value: "false"
+        - name: startupProbe.enabled
           value: "false"
         - name: expose.type
           value: "clusterIP"

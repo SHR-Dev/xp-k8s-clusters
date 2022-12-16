@@ -9,19 +9,16 @@ spec:
     repoURL: https://charts.crossplane.io/stable
     targetRevision: 1.10.0
     helm:
-      parameters:
-        - name: args.0
-          value: "--enable-external-secret-stores"
-        - name: customAnnotations.vault.hashicorp.com/agent-inject
-          value: "true"
-        - name: customAnnotations.vault.hashicorp.com/agent-inject-token
-          value: "true"
-        - name: customAnnotations.vault.hashicorp.com/role
-          value: "crossplane"
-        - name: customAnnotations.vault.hashicorp.com/agent-run-as-user
-          value: "65532"
+      values: |
+        args:
+          - "--enable-external-secret-stores"
+        customAnnotations:
+          vault.hashicorp.com/agent-inject: "true"
+          vault.hashicorp.com/agent-inject-token: "true"
+          vault.hashicorp.com/role: "crossplane"
+          vault.hashicorp.com/agent-run-as-user: "65532"
   destination:
-    server: "https://kubernetes.default.svc"
+    server: 'https://kubernetes.default.svc'
     namespace: management
   syncPolicy:
     automated:
