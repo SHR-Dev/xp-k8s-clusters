@@ -17,5 +17,8 @@ dependencies:
 - name: harbor
   repository: https://helm.goharbor.io
   version: 1.10.2
-digest: sha256:59625c06cad88baa73e8bb7629c4c83c7d7b1144c2c3cc51e750bae7152e28b6
-generated: "2022-11-28T11:07:42.783783249-05:00"
+- name: vault
+  repository: https://helm.releases.hashicorp.com
+  version: 0.23.0
+digest: sha256:68129a006da50cd52dbee94ba392d6f1eb4e2fe788ac33782af05e710a451d94
+generated: "2022-12-12T08:36:03.134405351-05:00"

@@ -71,12 +71,31 @@ argo-workflows:
 
 argo-events: {}
 
+crossplane:
+  # provider:
+  #   packages:
+  #     - xpkg.upbound.io/crossplane-contrib/provider-aws:v0.33.0
+  args:
+    - --enable-external-secret-stores
+  customAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-inject-token: "true"
+    vault.hashicorp.com/role: "crossplane"
+    vault.hashicorp.com/agent-run-as-user: "65532"
 
-# nginx-ingress:
-#   controller:
-#     service:
-#       type: NodePort
-#       # httpPort:
-#       #   nodePort: 80
-#       # httpsPort:
-#       #   nodePort: 443
+vault:
+  server:
+    volumes:
+      - name: vault-init
+        configMap:
+          name: mgmt-vault
+    volumeMounts:
+      - mountPath: /vault/userconfig/init.sh
+        name: vault-init
+        subPath: init.sh
+    dataStorage:
+      enabled: false
+    postStart:
+      - "/bin/sh"
+      - "-c"
+      - "sleep 5 && cp /vault/userconfig/init.sh /tmp/bootstrap.sh && chmod +x /tmp/bootstrap.sh && /tmp/bootstrap.sh"

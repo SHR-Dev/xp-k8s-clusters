@@ -1,0 +1,22 @@
+apiVersion: secrets.crossplane.io/v1alpha1
+kind: StoreConfig
+metadata:
+  name: vault
+  namespace: {{ .Release.Namespace }}
+annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  type: Vault
+  defaultScope: crossplane-system
+  vault:
+    server: http://vault.vault-system:8200
+    mountPath: secret/
+    version: v2
+    auth:
+      method: Token
+      token:
+        source: Filesystem
+        fs:
+          path: /vault/secrets/token"

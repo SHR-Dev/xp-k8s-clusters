@@ -21,12 +21,10 @@ dependencies:
 - name: gitea
   version: 6.0.3
   repository: https://dl.gitea.io/charts/
-# - name: gitea
-#   version: 0.1.1
-#   repository: https://charts.bitnami.com/bitnami  
 - name: harbor
   version: 1.10.2
   repository: https://helm.goharbor.io
-# - name: nginx-ingress
-#   version: 0.15.1
-#   repository: https://helm.nginx.com/stable
+- name: vault
+  version: 0.23.0
+  repository: https://helm.releases.hashicorp.com
+  

@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+spec:
+  project: management
+  source:
+    chart: vault
+    repoURL: https://helm.releases.hashicorp.com
+    targetRevision: 0.23.0
+    helm:
+      parameters:
+        - name: server.volumes.0.name
+          value: "vault-init"
+        - name: server.volumes.0.configMap.name
+          value: "mgmt-vault"
+        - name: server.volumeMounts.0.mountPath
+          value: /vault/userconfig/init.sh
+        - name: server.volumeMounts.0.name
+          value: vault-init
+        - name: server.volumeMounts.0.subPath
+          value: init.sh
+        - name: server.dataStorage.enabled
+          value: "false"
+        - name: server.postStart.0
+          value: "/bin/sh"
+        - name: server.postStart.1
+          value: "-c"
+        - name: server.postStart.2
+          value: "sleep 5 && cp /vault/userconfig/init.sh /tmp/bootstrap.sh && chmod +x /tmp/bootstrap.sh && /tmp/bootstrap.sh"
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: management
+  syncPolicy:
+    automated:
+      selfHeal: true
