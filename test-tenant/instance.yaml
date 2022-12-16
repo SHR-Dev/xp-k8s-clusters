@@ -12,22 +12,22 @@ spec:
     initialize:
       - type: git
         templateName: shrProject
-    environments:
-      - name: Dev
-        template: aws-environment
-    build:
-      - name: myApplication
-        type: argo-workflow
-        path: ./src/
-    deploy:
-      - name: Integration
-        path: ./chart/
-        other: |-
-          version: latest
-    compliance:
-      - name: MyApplicationComponent
-        type: OSCAL
-        path: ./compliance/myapp-cdef.xml
+    # environments:
+    #   - name: Dev
+    #     template: aws-environment
+    # build:
+    #   - name: myApplication
+    #     type: argo-workflow
+    #     path: ./src/
+    # deploy:
+    #   - name: Integration
+    #     path: ./chart/
+    #     other: |-
+    #       version: latest
+    # compliance:
+    #   - name: MyApplicationComponent
+    #     type: OSCAL
+    #     path: ./compliance/myapp-cdef.xml
 
 
 
