@@ -1,11 +1,11 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: projects.k8s.shred.cloud
+  name: managedprojects.k8s.shred.cloud
 spec:
   compositeTypeRef:
     apiVersion: k8s.shred.cloud/v1alpha1
-    kind: project
+    kind: managedproject
   resources:
     - name: namespace
       base:
@@ -55,58 +55,58 @@ spec:
           toFieldPath: spec.forProvider.manifest.metadata.namespace
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.manifest.spec.templates[0].container.env[3].value
-    - name: environments
-      base:
-        apiVersion: kubernetes.crossplane.io/v1alpha1
-        kind: Object
-        metadata:
-          name: project-initialization
-        spec:
-          forProvider:
-            manifest:
-              apiVersion: argoproj.io/v1alpha1
-              kind: Workflow
-              spec:
-                entrypoint: make-all
-                templates:
-                  - name: make-all
-                    steps:
-                    - - name: build-environment
-                        template: make-environment
-                        arguments:
-                          parameters:
-                          - name: env-name
-                            value: "{{item.name}}"
-                          - name: env-template
-                            value: "{{item.template}}"
-                        withItems: 
-                        - name: dev
-                          template: ekscluster
-                        - name: test
-                          template: ekscluster
-                  - name: make-environment
-                    resource:
-                      action: create
-                      successCondition: status.succeeded > 0
-                      failureCondition: status.failed > 3
-                      inputs:
-                        parameters:
-                          - name: name
-                          - name: template
-                      manifest: |
-                        apiVersion: k8s.shred.cloud/v1alpha1
-                        kind: {{inputs.parameters.env.template}}
-                        metadata:
-                          name: {{inputs.parameters.env.name}}
-                        spec:
-                          compositionSelector:
-                            matchLabels:
-                              provider: aws
-                          parameters:
-                            region: "us-east-1"
-      patches:
-        - fromFieldPath: metadata.name
-          toFieldPath: spec.forProvider.manifest.metadata.namespace
-        - fromFieldPath: spec.parameters.environments
-          toFieldPath: spec.forProvider.manifest.spec.templates[0].steps[0][0].withItems
+    # - name: environments
+    #   base:
+    #     apiVersion: kubernetes.crossplane.io/v1alpha1
+    #     kind: Object
+    #     metadata:
+    #       name: project-initialization
+    #     spec:
+    #       forProvider:
+    #         manifest:
+    #           apiVersion: argoproj.io/v1alpha1
+    #           kind: Workflow
+    #           spec:
+    #             entrypoint: make-all
+    #             templates:
+    #               - name: make-all
+    #                 steps:
+    #                 - - name: build-environment
+    #                     template: make-environment
+    #                     arguments:
+    #                       parameters:
+    #                       - name: env-name
+    #                         value: "{{item.name}}"
+    #                       - name: env-template
+    #                         value: "{{item.template}}"
+    #                     withItems: 
+    #                     - name: dev
+    #                       template: ekscluster
+    #                     - name: test
+    #                       template: ekscluster
+    #               - name: make-environment
+    #                 resource:
+    #                   action: create
+    #                   successCondition: status.succeeded > 0
+    #                   failureCondition: status.failed > 3
+    #                   inputs:
+    #                     parameters:
+    #                       - name: name
+    #                       - name: template
+    #                   manifest: |
+    #                     apiVersion: k8s.shred.cloud/v1alpha1
+    #                     kind: {{inputs.parameters.env.template}}
+    #                     metadata:
+    #                       name: {{inputs.parameters.env.name}}
+    #                     spec:
+    #                       compositionSelector:
+    #                         matchLabels:
+    #                           provider: aws
+    #                       parameters:
+    #                         region: "us-east-1"
+    #   patches:
+    #     - fromFieldPath: metadata.name
+    #       toFieldPath: spec.forProvider.manifest.metadata.namespace
+    #     - fromFieldPath: spec.parameters.environments
+    #       toFieldPath: spec.forProvider.manifest.spec.templates[0].steps[0][0].withItems
 

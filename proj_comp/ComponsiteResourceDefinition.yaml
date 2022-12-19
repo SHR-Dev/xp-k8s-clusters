@@ -1,15 +1,15 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: projects.k8s.shred.cloud
+  name: managedprojects.k8s.shred.cloud
 spec:
   group: k8s.shred.cloud
   names:
-    kind: project
-    plural: projects
+    kind: xmanagedproject
+    plural: xmanagedprojects
   claimNames:
-    kind: project
-    plural: projects
+    kind: managedproject
+    plural: managedprojects
   versions:
   - name: v1alpha1
     served: true

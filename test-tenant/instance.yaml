@@ -1,8 +1,8 @@
 apiVersion: k8s.shred.cloud/v1alpha1
-kind: project
+kind: managedproject
 metadata:
   name: "myproject"
-  namespace: "default"
+  namespace: "management"
 spec:
   parameters:
     poc: 

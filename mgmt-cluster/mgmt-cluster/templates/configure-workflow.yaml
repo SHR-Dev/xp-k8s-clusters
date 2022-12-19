@@ -2,6 +2,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   name: configure-crossplane
+  labels:
+    configures: crossplane
 spec:
   entrypoint: configure-crossplane
   templates:
@@ -33,6 +35,8 @@ spec:
                   value: providerconfigs.aws.crossplane.io
         - - name: aws-credconfig
             template: install-aws-credconfig
+        - - name: install-project-manager
+            template: project-manager
     - name: install-provider
       inputs: 
         parameters:
@@ -101,3 +105,16 @@ spec:
               source: Filesystem
               fs:
                 path: /vault/secrets/creds.txt
+    - name: project-manager
+      resource:
+        action: apply
+        manifest: | 
+          apiVersion: pkg.crossplane.io/v1
+          kind: Configuration
+          metadata:
+            name: project
+          spec:
+            package: matthewruge/project:v0.0.1
+            packagePullPolicy: Always
+            revisionActivationPolicy: Automatic
+            revisionHistoryLimit: 1
