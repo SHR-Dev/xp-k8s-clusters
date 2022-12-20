@@ -15,26 +15,26 @@ spec:
               parameters:
                 - name: crd-name
                   value: providers.pkg.crossplane.io
-        - - name: load-aws-provider
-            template: install-provider
-            arguments:
-              parameters:
-                - name: provider-name
-                  value: provider-aws
-                - name: provider-package
-                  value: xpkg.upbound.io/crossplane-contrib/provider-aws:v0.33.0
-                - name: provider-config
-                  value: aws-vault-config
-        - - name: aws-config
-            template: load-aws-config
-        - - name: wait-for-awscrd
-            template: crd-wait
-            arguments:
-              parameters:
-                - name: crd-name
-                  value: providerconfigs.aws.crossplane.io
-        - - name: aws-credconfig
-            template: install-aws-credconfig
+        # - - name: load-aws-provider
+        #     template: install-provider
+        #     arguments:
+        #       parameters:
+        #         - name: provider-name
+        #           value: provider-aws
+        #         - name: provider-package
+        #           value: xpkg.upbound.io/crossplane-contrib/provider-aws:v0.33.0
+        #         - name: provider-config
+        #           value: aws-vault-config
+        # - - name: aws-config
+        #     template: load-aws-config
+        # - - name: wait-for-awscrd
+        #     template: crd-wait
+        #     arguments:
+        #       parameters:
+        #         - name: crd-name
+        #           value: providerconfigs.aws.crossplane.io
+        # - - name: aws-credconfig
+        #     template: install-aws-credconfig
         - - name: install-project-manager
             template: project-manager
     - name: install-provider
@@ -60,6 +60,7 @@ spec:
         parameters:
           - name: crd-name
       retryStrategy:
+        retryPolicy: "Always"
         limit: "100"
         expression: "asInt(lastRetry.exitCode) == 1"
       resource:
@@ -107,14 +108,14 @@ spec:
                 path: /vault/secrets/creds.txt
     - name: project-manager
       resource:
-        action: apply
+        action: create
         manifest: | 
           apiVersion: pkg.crossplane.io/v1
           kind: Configuration
           metadata:
             name: project
           spec:
-            package: matthewruge/project:v0.0.1
+            package: matthewruge/managedproject:v0.0.1
             packagePullPolicy: Always
             revisionActivationPolicy: Automatic
             revisionHistoryLimit: 1

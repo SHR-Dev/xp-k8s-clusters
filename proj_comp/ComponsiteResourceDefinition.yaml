@@ -5,9 +5,6 @@ metadata:
 spec:
   group: k8s.shred.cloud
   names:
-    kind: xmanagedproject
-    plural: xmanagedprojects
-  claimNames:
     kind: managedproject
     plural: managedprojects
   versions:
