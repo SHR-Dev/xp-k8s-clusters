@@ -45,7 +45,7 @@ spec:
                         - name: GITEA_PASSWORD
                           value: 'r8sA8CPHD9!bt6d'
                         - name: GITEA_URI
-                          value: http://mgmt-gitea-http.management:3000
+                          value: http://git-gitea-http.management:3000
                         - name: ORGNAME
                           value: orgname
                         - name: REPONAME
