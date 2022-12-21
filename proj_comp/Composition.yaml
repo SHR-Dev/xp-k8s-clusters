@@ -21,6 +21,38 @@ spec:
       patches:
         - fromFieldPath: metadata.name
           toFieldPath: spec.forProvider.manifest.metadata.name
+    - name: argoapp
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        metadata:
+          name: argocd-appinit
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Application
+              metadata:
+                name: myapp
+                namespace: myproject
+              spec:
+                destination:
+                  namespace: myproject
+                  server: https://kubernetes.default.svc
+                project: default
+                source:
+                  path: .
+                  repoURL: http://git-gitea-http.management:3000/myproject/project_info.git
+                  targetRevision: HEAD
+                syncPolicy:
+                  automated:
+                    allowEmpty: true
+                    prune: true
+                  syncOptions:
+                  - CreateNamespace=true
+      patches:
+        - fromFieldPath: metadata.name
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
     - name: repo
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1

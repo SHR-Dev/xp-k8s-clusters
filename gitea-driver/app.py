@@ -1,4 +1,7 @@
 import requests, os, random, string
+import git 
+import tempfile
+
 
 GITEA_URI = os.environ.get('GITEA_URI','http://mgmt-gitea-http')
 GITEA_USERNAME = os.environ.get('GITEA_USERNAME','gitea_admin')
@@ -30,9 +33,23 @@ def create_repo(orgname, reponame):
     print(f"Creating Repo {orgname}/{reponame}")
     post(f'{api}/orgs/{orgname}/repos', {'name':reponame})
 
+def initialize_repo(orgname, reponame):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
+        with open('README.md', 'w') as readme:
+            readme.write(f"# {reponame}")
+        repo = git.Repo.init()
+        repo.git.checkout('-b','main')
+        repo.git.add('--all')
+        repo.git.commit('-m','"Initial Project Creation"')
+        GITEAwCRED = GITEA_URI.replace('//',f"//{GITEA_USERNAME}:{GITEA_PASSWORD}@")
+        remote = repo.create_remote('gitea', url=f"{GITEAwCRED}/{orgname}/{reponame}.git")
+        repo.git.push('-u','gitea','main')
+    
 
 ORGNAME  = os.environ.get('ORGNAME', False)
 REPONAME = os.environ.get('REPONAME', False)
 if ORGNAME and REPONAME:
     create_org(ORGNAME)
     create_repo(ORGNAME, REPONAME)
+    initialize_repo(ORGNAME, REPONAME)

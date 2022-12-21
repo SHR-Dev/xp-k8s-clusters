@@ -1,6 +1,6 @@
 #!/bin/bash
 kind delete cluster
-kind create cluster --config=kind.yml
+kind create cluster # --config=kind.yml
 
 k="kubectl -n management "
 
@@ -10,7 +10,7 @@ helm upgrade --install --wait \
     --repo=https://argoproj.github.io/argo-helm \
     --set configs.secret.argocdServerAdminPassword='$2y$10$ZgBRKmHYy4tPe5.iEHvX2u.oEZ4.Tnc4LfQPT25IU02Cstma8zcEy'
 
-${k} apply -f mgmt-cluster/templates/vault_init.sh
+${k} apply -f resources/vault_init.sh
 
 ${k} apply -f Argo-Apps/
 
@@ -24,12 +24,12 @@ ${k} wait --timeout=5m\
 
 
 ${k} apply \
-    -f mgmt-cluster/templates/configure-workflow.yaml
+    -f resources/configure-workflow.yaml
 
-${k} wait --timeout=20m \
+${k} wait --timeout=5m \
     --for=jsonpath='{.status.phase}'=Succeeded \
     Workflow -l configures=crossplane  
 
 
-${k} apply -f ../proj_comp/provider-config.yml.bak
+${k} apply -f resources/provider-config.yml
 # helm uninstall --namespace management argocd
