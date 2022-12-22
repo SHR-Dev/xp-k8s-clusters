@@ -34,7 +34,7 @@ spec:
               kind: Application
               metadata:
                 name: myapp
-                namespace: myproject
+                namespace: management
               spec:
                 destination:
                   namespace: myproject

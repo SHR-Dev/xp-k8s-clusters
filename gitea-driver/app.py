@@ -41,6 +41,8 @@ def initialize_repo(orgname, reponame):
         repo = git.Repo.init()
         repo.git.checkout('-b','main')
         repo.git.add('--all')
+        repo.config_writer().set_value("user", "name", "ProjectInit").release()
+        repo.config_writer().set_value("user", "email", "Project-Initializer@system.local").release()
         repo.git.commit('-m','"Initial Project Creation"')
         GITEAwCRED = GITEA_URI.replace('//',f"//{GITEA_USERNAME}:{GITEA_PASSWORD}@")
         remote = repo.create_remote('gitea', url=f"{GITEAwCRED}/{orgname}/{reponame}.git")
