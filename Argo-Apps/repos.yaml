@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: git
+spec:
+  project: management
+  source:
+    chart: gitea
+    repoURL: https://dl.gitea.io/charts/
+    targetRevision: 6.0.3
+    helm:
+      parameters:
+        - name: persistence.enabled
+          value: "false"
+        - name: gitea.config.webhook.ALLOWED_HOST_LIST
+          value: "*"
+        - name: postgresql.persistence.enabled
+          value: "false"
+        - name: memcached.enabled
+          value: "false"
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: management
+  syncPolicy:
+    automated:
+      selfHeal: true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: registry
+spec:
+  project: management
+  source:
+    chart: harbor
+    repoURL: https://helm.goharbor.io
+    targetRevision: 1.10.2
+    helm:
+      parameters:
+        - name: externalURL
+          value: "https://harbor.management.svc.cluster.local"
+        - name: persistence.enabled
+          value: "false"
+        - name: trivy.enabled
+          value: "false"
+        - name: notary.enabled
+          value: "false"
+        - name: chartmuseum.enabled
+          value: "false"
+        - name: startupProbe.enabled
+          value: "false"
+        - name: expose.type
+          value: "clusterIP"
+        - name: expose.tls.auto.commonName
+          value: harbor.default.svc.cluster.local
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: management
+  syncPolicy:
+    automated:
+      selfHeal: true

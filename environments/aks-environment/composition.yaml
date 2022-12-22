@@ -1,0 +1,54 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: aksclusters.k8s.shred.cloud
+  labels:
+    provider: azure
+spec:
+  compositeTypeRef:
+    apiVersion: k8s.shred.cloud/v1alpha1
+    kind: akscluster
+  resources:
+    - name: Group
+      base:
+        apiVersion: azure.crossplane.io/v1alpha3
+        kind: ResourceGroup
+        spec:
+          location: "East US"
+    - name: Cluster
+      base:
+        apiVersion: compute.azure.crossplane.io/v1alpha3
+        kind: AKSCluster
+        spec:
+          resourceGroupNameSelector:
+            matchControllerRef: true 
+          vnetSubnetIDSelector:
+            matchControllerRef: true 
+          location: "East US"
+          version: "1.25.2"
+          nodeCount: 3
+          nodeVMSize: Standard_B2s
+    - name: vNet
+      base:
+        apiVersion: network.azure.crossplane.io/v1alpha3
+        kind: VirtualNetwork
+        spec:
+          resourceGroupNameSelector:
+            matchControllerRef: true 
+          location: "East US"
+          properties:
+            addressSpace:
+              addressPrefixes:
+                - 10.0.0.0/16
+    - name: Subnet
+      base:
+        apiVersion: network.azure.crossplane.io/v1alpha3
+        kind: Subnet
+        spec:
+          resourceGroupNameSelector:
+            matchControllerRef: true 
+          virtualNetworkNameSelector:
+            matchControllerRef: true 
+          properties:
+            addressPrefix: 10.0.0.0/24
+      

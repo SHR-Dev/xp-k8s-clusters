@@ -1,0 +1,11 @@
+apiVersion: azure.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default # naming it default makes it default, as in can avoid overriding provider ref for ever resource
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: default
+      name: azure-credentials
+      key: credentials

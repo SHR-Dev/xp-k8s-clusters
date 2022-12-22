@@ -1,0 +1,120 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: eksclusters.k8s.shred.cloud
+  labels:
+    provider: aws
+spec:
+  compositeTypeRef:
+    apiVersion: k8s.shred.cloud/v1alpha1
+    kind: ekscluster
+  resources:
+    - name: vpc 
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: VPC
+        spec:
+          forProvider:
+            cidrBlock: 10.0.0.0/16
+            region: us-east-1
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.parameters.region
+        toFieldPath: spec.forProvider.region
+    - name: subnetA
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: Subnet
+        spec:
+          forProvider:
+            cidrBlock: 10.0.0.0/24
+            region: us-east-1
+            availabilityZone: us-east-1a
+            vpcIdSelector:
+              matchControllerRef: true
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.parameters.region
+        toFieldPath: spec.forProvider.region
+    - name: subnetB
+      base:
+        apiVersion: ec2.aws.upbound.io/v1beta1
+        kind: Subnet
+        spec:
+          forProvider:
+            cidrBlock: 10.0.1.0/24
+            region: us-east-1
+            availabilityZone: us-east-1b
+            vpcIdSelector:
+              matchControllerRef: true
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.parameters.region
+        toFieldPath: spec.forProvider.region
+    - name: nodes 
+      base:
+        apiVersion: eks.aws.upbound.io/v1beta1
+        kind: NodeGroup
+        spec:
+          forProvider:
+            region: us-east-1
+            clusterNameSelector:
+              matchControllerRef: true
+            scalingConfig:
+              - minSize: 3
+                maxSize: 3
+                desiredSize: 3
+            instanceTypes:
+            - t3.small
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.parameters.region
+        toFieldPath: spec.forProvider.region
+    - name: iamrole
+      base:
+        apiVersion: iam.aws.upbound.io/v1beta1
+        kind: Role
+        spec:
+          forProvider:
+            assumeRolePolicy: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [
+                                "ec2.amazonaws.com"
+                            ]
+                        },
+                        "Action": [
+                            "sts:AssumeRole"
+                        ]
+                    }
+                ]
+              }
+    - name: iamattachment
+      base:
+        apiVersion: iam.aws.upbound.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+            roleSelector:
+              matchControllerRef: true
+    - name: eks
+      base:
+        apiVersion: eks.aws.upbound.io/v1beta1
+        kind: Cluster
+        spec:
+          forProvider:
+            region: us-east-1
+            roleArnSelector:
+              matchControllerRef: true
+            vpcConfig:
+              - subnetIdSelector:
+                  matchControllerRef: true
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: spec.parameters.region
+        toFieldPath: spec.forProvider.region

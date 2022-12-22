@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nginx-ingress
+spec:
+  type: NodePort

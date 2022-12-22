@@ -1,0 +1,16 @@
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: managedproject
+metadata:
+  name: "myproject"
+  namespace: "management"
+spec:
+  parameters:
+    poc: 
+      name: Matthew Ruge
+      email: matthew.ruge@shrgroupllc.com
+      organization: SHR
+    initialize:
+      - type: git
+        templateName: shrProject
+
+---

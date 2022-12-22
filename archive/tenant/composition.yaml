@@ -1,0 +1,94 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: tenants.k8s.shred.cloud
+spec:
+  compositeTypeRef:
+    apiVersion: k8s.shred.cloud/v1alpha1
+    kind: tenant
+  resources:
+    - name: namespace
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        metadata:
+          name: tenant-namespace
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Namespace
+          providerConfigRef:
+            name: kubernetes-provider
+    - name: orgrepo
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: batch/v1
+              kind: Job
+              metadata:
+                namespace: default
+              spec:
+                template:
+                  spec:
+                    containers:
+                    - name: createorg
+                      image: matthewruge/gitea-driver:latest
+                      imagePullPolicy: Always
+                      env:
+                        - name: GITEA_USERNAME
+                          value: 'gitea_admin'
+                        - name: GITEA_PASSWORD
+                          value: 'r8sA8CPHD9!bt6d'
+                        - name: GITEA_URI
+                          value: http://mgmt-gitea-http:3000
+                        - name: ORGNAME
+                          value: orgname
+                        - name: REPONAME
+                          value: environment
+                    restartPolicy: Never
+                backoffLimit: 1
+          providerConfigRef:
+            name: kubernetes-provider
+      patches:
+      - type: FromCompositeFieldPath
+        fromFieldPath: metadata.name
+        toFieldPath: spec.forProvider.manifest.spec.template.spec.containers[0].env[3].value
+    - name: argoconnector
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        metadata:
+          name: tenant-argoapp
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Application
+              metadata:
+                namespace: default
+              spec:
+                project: default
+                source:
+                  repoURL: theRepo
+                  targetRevision: HEAD
+                  path: /
+                destination:
+                  server: https://kubernetes.default.svc
+                  namespace: thenamespace
+          providerConfigRef:
+            name: kubernetes-provider
+      patches:
+      - type: CombineToComposite
+        combine:
+          variables:
+            - fromFieldPath: metadata.name
+          strategy: string
+          string:
+            fmt: "http://mgmt-gitea-http:3000/%s/environment.git"
+        toFieldPath: spec.forProvider.manifest.spec.source.repoURL
+      - fromFieldPath: metadata.name
+        toFieldPath: spec.forProvider.manifest.spec.destination.namespace

@@ -1,0 +1,10 @@
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: akscluster
+metadata:
+  name: demo-aks
+spec:
+  compositionSelector:
+    matchLabels:
+      provider: azure
+  parameters:
+    region: "East US"

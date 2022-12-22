@@ -1,0 +1,9 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Configuration
+metadata:
+  name: project
+spec:
+  package: matthewruge/project:v0.0.1
+  packagePullPolicy: Always
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 1

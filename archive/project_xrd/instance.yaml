@@ -1,0 +1,36 @@
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: Project
+metadata:
+  namespace: default
+  name: my-app
+spec:
+  description:
+    poc: 
+      name: Matthew Ruge
+      email: matthew.ruge@shrgroupllc.com
+  builds:
+    - name: build1
+    - name: build2
+  deployments:
+    - name: dev
+  testing:
+    - name: UX
+    - name: GAT
+---
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: Project
+metadata:
+  namespace: default
+  name: some-other-app
+spec:
+  description:
+    poc: 
+      name: Alex Nguyen
+      email: alex.nguyen@shrgroupllc.com
+  builds:
+    - name: build1
+  deployments:
+    - name: dev
+    - name: prod
+  testing:
+    - name: manual

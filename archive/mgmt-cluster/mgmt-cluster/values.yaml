@@ -1,0 +1,101 @@
+kind:
+  ingress:
+    enabled: false
+
+preload:
+  gitRepos:
+  helmCharts:
+  Containers:
+  
+# gitea:
+#   rootURL: http://localhost/git/
+#   ingress:
+#     enabled: true
+#     hostname: localhost
+#     path: /git
+
+gitea:
+  image:
+    repository: gitea/gitea
+    tag: latest
+    # rootless: true
+  gitea:
+    config:
+      server:
+        # ROOT_URL: http://localhost:9000/git/
+        # LOCAL_ROOT_URL: http://mgmt-gitea-http:3000/git/
+        DISABLE_SSH: true
+      webhook:
+        ALLOWED_HOST_LIST: "*"
+  # ingress:
+  #   enabled: true
+  #   annotations:
+  #     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+  #   hosts:
+  #     - host: localhost
+  #       paths:
+  #       - path: /git/
+  #         pathType: Prefix
+harbor:
+  externalURL: "https://harbor.default.svc.cluster.local"
+  persistence:
+    enabled: false
+  trivy:
+    enabled: false
+  notary:
+    enabled: false
+  expose:
+    type: clusterIP
+    tls:
+      auto:
+        commonName: harbor.default.svc.cluster.local
+    # tls:
+    #   enabled: false
+argo-cd:
+  dex:
+    enabled: false
+  # redis:
+  #   enabled: false
+  notifications:
+    enabled: false
+  repositories:
+    istio-helm-repo:
+      url: https://storage.googleapis.com/istio-prerelease/daily-build/master-latest-daily/charts
+      name: istio.io
+      type: helm
+
+argo-workflows:
+  server:
+    extraArgs:
+      - --auth-mode=server
+
+argo-events: {}
+
+crossplane:
+  # provider:
+  #   packages:
+  #     - xpkg.upbound.io/crossplane-contrib/provider-aws:v0.33.0
+  args:
+    - --enable-external-secret-stores
+  customAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-inject-token: "true"
+    vault.hashicorp.com/role: "crossplane"
+    vault.hashicorp.com/agent-run-as-user: "65532"
+
+vault:
+  server:
+    volumes:
+      - name: vault-init
+        configMap:
+          name: mgmt-vault
+    volumeMounts:
+      - mountPath: /vault/userconfig/init.sh
+        name: vault-init
+        subPath: init.sh
+    dataStorage:
+      enabled: false
+    postStart:
+      - "/bin/sh"
+      - "-c"
+      - "sleep 5 && cp /vault/userconfig/init.sh /tmp/bootstrap.sh && chmod +x /tmp/bootstrap.sh && /tmp/bootstrap.sh"

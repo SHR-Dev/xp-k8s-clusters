@@ -1,0 +1,8 @@
+apiVersion: k8s.shred.cloud/v1alpha1
+kind: ekscluster
+metadata:
+  name: demo-eks
+spec:
+  compositionSelector:
+    matchLabels:
+      provider: aws
